@@ -89,7 +89,7 @@ public class EditableCellTable implements EntryPoint {
 
             Integer pendingValue = (viewData == null) ? null : viewData.value;
             String asString = Objects.toString(pendingValue != null ? pendingValue : value);
-            sb.append(fromTrustedString("<input type=\"text\" value=\"" + asString + "\" tabindex=\"-1\"></input>"));
+            sb.append(fromTrustedString("<input type=\"text\" value=\"" + asString + "\" tabindex=\"-1\"/>"));
         }
 
         @Override
