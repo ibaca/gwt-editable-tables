@@ -1,11 +1,6 @@
 package editabletables.celltable;
 
-import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromTrustedString;
-
-import com.google.gwt.cell.client.AbstractInputCell;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.TextInputCell;
-import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.cell.client.*;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
@@ -13,10 +8,14 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 import editabletables.common.Person;
+
 import java.util.List;
 import java.util.Objects;
+
+import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromTrustedString;
 
 public class EditableCellTable implements EntryPoint {
     public void onModuleLoad() {
@@ -28,17 +27,38 @@ public class EditableCellTable implements EntryPoint {
             @Override public void update(int i, Person p, String v) { p.setName(v); } }); }
             @Override public String getValue(Person object) { return object.getName(); } };
         table.addColumn(nameColumn);
+
         final Column<Person, Integer> ageColumn = new Column<Person, Integer>(new IntegerInputCell()) {
             { setFieldUpdater(new FieldUpdater<Person, Integer>() {
             @Override public void update(int i, Person p, Integer v) { p.setAge(v); } }); }
             @Override public Integer getValue(Person object) { return object.getAge(); } };
         table.addColumn(ageColumn);
+
+        final Column<Person, Boolean> aliveColumn = new Column<Person, Boolean>(new CheckboxCell()) {
+            { setFieldUpdater(createCancellableCheckboxUpdater(table, (CheckboxCell) getCell())); }
+            @Override public Boolean getValue(Person object) { return object.isAlive(); } };
+        table.addColumn(aliveColumn);
         //@formatter:on
+
 
         final List<Person> data = Person.generate(10);
         table.setRowData(data);
 
         RootPanel.get().add(table);
+    }
+
+    /** Example for cancellable checkbox update on a checkbox cell. */
+    private FieldUpdater<Person, Boolean> createCancellableCheckboxUpdater(final CellTable<Person> table, final AbstractEditableCell cell) {
+        return new FieldUpdater<Person, Boolean>() {
+            @Override
+            public void update(final int i, final Person p, Boolean v) {
+                if (Window.confirm("Are You God?")) p.setAlive(v);
+                else {
+                    cell.clearViewData(p);
+                    table.redrawRow(i); // not sure if 'i' is absolute or relative ¿?¿?
+                }
+            }
+        };
     }
 
     private static class IntegerInputCell extends AbstractInputCell<Integer, IntegerInputCell.ViewData> {

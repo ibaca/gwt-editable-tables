@@ -8,6 +8,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.LegacyHandlerWrapper;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,13 +18,15 @@ public class Person implements HasValueChangeHandlers<Person> {
     private final EventBus eventHandler = new SimpleEventBus();
     private String name;
     private Integer age;
+    private Boolean alive;
 
     public Person() {
     }
 
-    public Person(String name, Integer age) {
+    public Person(String name, Integer age, Boolean alive) {
         this.name = name;
         this.age = age;
+        this.alive = alive;
     }
 
     public String getName() {
@@ -31,7 +34,7 @@ public class Person implements HasValueChangeHandlers<Person> {
     }
 
     public void setName(String name) {
-        final Person oldValue = new Person(this.name, this.age);
+        final Person oldValue = copy(this);
         this.name = name;
         ValueChangeEvent.fireIfNotEqual(this, oldValue, this);
     }
@@ -41,8 +44,18 @@ public class Person implements HasValueChangeHandlers<Person> {
     }
 
     public void setAge(Integer age) {
-        final Person oldValue = new Person(this.name, this.age);
+        final Person oldValue = copy(this);
         this.age = age;
+        ValueChangeEvent.fireIfNotEqual(this, oldValue, this);
+    }
+
+    public Boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(Boolean alive) {
+        final Person oldValue = copy(this);
+        this.alive = alive;
         ValueChangeEvent.fireIfNotEqual(this, oldValue, this);
     }
 
@@ -51,18 +64,16 @@ public class Person implements HasValueChangeHandlers<Person> {
         if (!(o instanceof Person)) return false;
         Person person = (Person) o;
         return Objects.equals(getName(), person.getName()) &&
-                Objects.equals(getAge(), person.getAge());
+                Objects.equals(getAge(), person.getAge()) &&
+                Objects.equals(isAlive(), person.isAlive());
     }
 
     @Override public int hashCode() {
-        return Objects.hash(getName(), getAge());
+        return Objects.hash(getName(), getAge(), isAlive());
     }
 
     @Override public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+        return "Person{name='" + name + '\'' + ", age=" + age + ", alive=" + alive + '}';
     }
 
     @Override public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Person> handler) {
@@ -71,6 +82,10 @@ public class Person implements HasValueChangeHandlers<Person> {
 
     @Override public void fireEvent(GwtEvent<?> event) {
         eventHandler.fireEvent(event);
+    }
+
+    public static Person copy(Person that) {
+        return new Person(that.name, that.age, that.alive);
     }
 
     public static List<Person> generate(int num) {
@@ -84,7 +99,7 @@ public class Person implements HasValueChangeHandlers<Person> {
     public static List<Person> generate(int num, ValueChangeHandler<Person> handler) {
         final List<Person> result = new ArrayList<>(num);
         for (int i = 0; i < num; i++) {
-            Person person = new Person("Person#" + i, (int) (Math.random() * 100.));
+            Person person = new Person("Person#" + i, (int) (Math.random() * 100.), Math.random() > .7);
             person.addValueChangeHandler(handler);
             result.add(person);
         }
