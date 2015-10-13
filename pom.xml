@@ -5,7 +5,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.bacamt.ibaca</groupId>
     <artifactId>gwt-editable-tables</artifactId>
-    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>GWT Editable Tables Lab</name>
 
@@ -13,7 +12,10 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gwtVersion>2.7.0</gwtVersion>
+        <gwt.version>2.7.0</gwt.version>
+        <gwt.modules>
+            editabletables.celltable.EditableCellTable,editabletables.flextable.EditableFlexTable,editabletables.gwtquery.EditableGwtQueryTable
+        </gwt.modules>
     </properties>
 
     <dependencyManagement>
@@ -21,7 +23,7 @@
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt</artifactId>
-                <version>${gwtVersion}</version>
+                <version>${gwt.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -55,18 +57,55 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>net.ltgt.gwt.maven</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.7.0</version>
+                <version>1.0-rc-3</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <runTarget>index.jsp</runTarget>
-                    <strict>true</strict>
-                    <copyWebapp>true</copyWebapp>
+                    <moduleName/>
+                    <skipModule>true</skipModule>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-cell</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <moduleName>editabletables.celltable.EditableCellTable</moduleName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-flex</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <moduleName>editabletables.flextable.EditableFlexTable</moduleName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-gquery</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <moduleName>editabletables.gwtquery.EditableGwtQueryTable</moduleName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package-app</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

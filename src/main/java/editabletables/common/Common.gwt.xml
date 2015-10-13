@@ -3,5 +3,6 @@
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="com.google.gwt.logging.Logging"/>
     <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <collapse-all-properties/>
     <source path=""/>
 </module>
