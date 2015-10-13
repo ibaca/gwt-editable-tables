@@ -13,6 +13,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gwt.version>2.7.0</gwt.version>
+        <gwt.projects>gwt-editable-tables</gwt.projects>
         <gwt.modules>
             editabletables.celltable.EditableCellTable,editabletables.flextable.EditableFlexTable,editabletables.gwtquery.EditableGwtQueryTable
         </gwt.modules>
