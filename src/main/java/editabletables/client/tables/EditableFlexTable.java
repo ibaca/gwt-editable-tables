@@ -1,18 +1,17 @@
-package editabletables.flextable;
+package editabletables.client.tables;
 
-import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import editabletables.common.Person;
+import editabletables.client.Person;
 import java.util.List;
 
-public class EditableFlexTable implements EntryPoint {
-    public void onModuleLoad() {
-        FlexTable table = new FlexTable();
+public class EditableFlexTable extends Composite {
+    public EditableFlexTable() {
+        FlexTable table = new FlexTable(); initWidget(table);
 
         List<Person> data = Person.generate(10);
         int row = -1;
@@ -37,7 +36,5 @@ public class EditableFlexTable implements EntryPoint {
 
             table.setWidget(row, 1, ageBox);
         }
-
-        RootPanel.get().add(table);
     }
 }

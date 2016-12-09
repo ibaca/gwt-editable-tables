@@ -1,4 +1,4 @@
-package editabletables.common;
+package editabletables.client;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

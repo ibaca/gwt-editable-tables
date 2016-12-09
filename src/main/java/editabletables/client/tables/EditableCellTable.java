@@ -1,7 +1,11 @@
-package editabletables.celltable;
+package editabletables.client.tables;
 
-import com.google.gwt.cell.client.*;
-import com.google.gwt.core.client.EntryPoint;
+import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromTrustedString;
+
+import com.google.gwt.cell.client.AbstractInputCell;
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.TextInputCell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
@@ -9,56 +13,50 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.RootPanel;
-import editabletables.common.Person;
-
-import java.util.List;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IntegerBox;
+import editabletables.client.Person;
 import java.util.Objects;
 
-import static com.google.gwt.safehtml.shared.SafeHtmlUtils.fromTrustedString;
+public class EditableCellTable extends Composite {
+    public EditableCellTable() {
+        final FlowPanel container = new FlowPanel(); initWidget(container);
+        final IntegerBox rows = new IntegerBox(); container.add(rows);
+        final CellTable<Person> table = new CellTable<>(); container.add(table);
 
-public class EditableCellTable implements EntryPoint {
-    public void onModuleLoad() {
-        final CellTable<Person> table = new CellTable<>();
-
-        //@formatter:off
         final Column<Person, String> nameColumn = new Column<Person, String>(new TextInputCell()) {
-            { setFieldUpdater(new FieldUpdater<Person, String>() {
-            @Override public void update(int i, Person p, String v) { p.setName(v); } }); }
-            @Override public String getValue(Person object) { return object.getName(); } };
+            { setFieldUpdater((i, p, v) -> p.setName(v)); }
+
+            @Override public String getValue(Person object) { return object.getName(); }
+        };
         table.addColumn(nameColumn);
 
         final Column<Person, Integer> ageColumn = new Column<Person, Integer>(new IntegerInputCell()) {
-            { setFieldUpdater(new FieldUpdater<Person, Integer>() {
-            @Override public void update(int i, Person p, Integer v) { p.setAge(v); } }); }
-            @Override public Integer getValue(Person object) { return object.getAge(); } };
+            { setFieldUpdater((i, p, v) -> p.setAge(v)); }
+
+            @Override public Integer getValue(Person object) { return object.getAge(); }
+        };
         table.addColumn(ageColumn);
 
         final Column<Person, Boolean> aliveColumn = new Column<Person, Boolean>(new CheckboxCell()) {
-            { setFieldUpdater(createCancellableCheckboxUpdater(table, (CheckboxCell) getCell())); }
-            @Override public Boolean getValue(Person object) { return object.isAlive(); } };
-        table.addColumn(aliveColumn);
-        //@formatter:on
-
-
-        final List<Person> data = Person.generate(10);
-        table.setRowData(data);
-
-        RootPanel.get().add(table);
-    }
-
-    /** Example for cancellable checkbox update on a checkbox cell. */
-    private FieldUpdater<Person, Boolean> createCancellableCheckboxUpdater(final CellTable<Person> table, final AbstractEditableCell cell) {
-        return new FieldUpdater<Person, Boolean>() {
-            @Override
-            public void update(final int i, final Person p, Boolean v) {
-                if (Window.confirm("Are You God?")) p.setAlive(v);
-                else {
-                    cell.clearViewData(p);
-                    table.redrawRow(i); // not sure if 'i' is absolute or relative ¿?¿?
-                }
+            {
+                setFieldUpdater((i, p, v) -> {
+                    if (Window.confirm("Are You God?")) p.setAlive(v);
+                    else {
+                        ((CheckboxCell) getCell()).clearViewData(p);
+                        table.redrawRow(i); /* not sure if 'i' is absolute or relative ¿?¿?*/
+                    }
+                });
             }
+
+            @Override public Boolean getValue(Person object) { return object.isAlive(); }
         };
+        table.addColumn(aliveColumn);
+
+        // connect and initialize
+        rows.addValueChangeHandler(e -> table.setRowData(Person.generate(e.getValue())));
+        rows.setValue(10, true);
     }
 
     private static class IntegerInputCell extends AbstractInputCell<Integer, IntegerInputCell.ViewData> {
@@ -129,8 +127,7 @@ public class EditableCellTable implements EntryPoint {
             public void setValue(String value) {
                 try {
                     this.value = Integer.parseInt(value);
-                } catch (Exception ignore) {
-                }
+                } catch (Exception ignore) { }
             }
         }
     }
