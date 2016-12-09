@@ -8,13 +8,14 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.LegacyHandlerWrapper;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
 public class Person implements HasValueChangeHandlers<Person> {
+    private static final ValueChangeHandler<Person> LOG_CHANGES = event -> Logger.getGlobal()
+            .info("change event: " + event.toDebugString());
     private final EventBus eventHandler = new SimpleEventBus();
     private String name;
     private Integer age;
@@ -89,18 +90,14 @@ public class Person implements HasValueChangeHandlers<Person> {
     }
 
     public static List<Person> generate(int num) {
-        return generate(num, new ValueChangeHandler<Person>() {
-            @Override public void onValueChange(ValueChangeEvent<Person> event) {
-                Logger.getGlobal().info("change event: " + event.toDebugString());
-            }
-        });
+        return generate(num, LOG_CHANGES);
     }
 
     public static List<Person> generate(int num, ValueChangeHandler<Person> handler) {
         final List<Person> result = new ArrayList<>(num);
         for (int i = 0; i < num; i++) {
             Person person = new Person("Person#" + i, (int) (Math.random() * 100.), Math.random() > .7);
-            person.addValueChangeHandler(handler);
+            if (handler != null) person.addValueChangeHandler(handler);
             result.add(person);
         }
         return result;

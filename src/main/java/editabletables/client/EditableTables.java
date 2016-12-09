@@ -10,14 +10,16 @@ import editabletables.client.tables.EditableCellTable;
 import editabletables.client.tables.EditableFlexTable;
 import editabletables.client.tables.EditableGwtQueryTable;
 import editabletables.client.tables.ReadOnlyCellTable;
+import editabletables.client.tables.ReadOnlyD3Table;
 
 public class EditableTables implements EntryPoint {
     @Override public void onModuleLoad() {
         TabLayoutPanel tabs = new TabLayoutPanel(32, PX);
-        tabs.add(new ScrollPanel(new ReadOnlyCellTable()), "Cell view");
-        tabs.add(new ScrollPanel(new EditableCellTable()), "Cell edit");
-        tabs.add(new ScrollPanel(new EditableFlexTable()), "Flex edit");
-        tabs.add(new ScrollPanel(new EditableGwtQueryTable()), "GQuery edit");
+        tabs.add(new ScrollPanel(new ReadOnlyCellTable()), "Cell read only");
+        tabs.add(new ScrollPanel(new ReadOnlyD3Table()), "D3 read only");
+        tabs.add(new ScrollPanel(new EditableCellTable()), "Cell editable");
+        tabs.add(new ScrollPanel(new EditableFlexTable()), "Flex editable");
+        tabs.add(new ScrollPanel(new EditableGwtQueryTable()), "GQuery editable");
         RootLayoutPanel.get().add(tabs);
     }
 }

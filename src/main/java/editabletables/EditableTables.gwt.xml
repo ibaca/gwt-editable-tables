@@ -4,6 +4,7 @@
     <inherits name="com.google.gwt.query.Query"/>
     <inherits name="com.google.gwt.user.User"/>
     <inherits name="com.google.gwt.user.theme.clean.Clean"/>
+    <inherits name="com.github.gwtd3.D3"/>
     <set-property name="gwt.logging.enabled" value="TRUE"/>
     <collapse-all-properties/>
     <entry-point class="editabletables.client.EditableTables"/>

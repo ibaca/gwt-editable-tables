@@ -8,11 +8,13 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>gwt-app</packaging>
     <name>GWT Editable Tables Lab</name>
+    <url>https://github.com/ibaca/gwt-editable-tables</url>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <github.global.server>github</github.global.server>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +42,11 @@
             <groupId>com.googlecode.gwtquery</groupId>
             <artifactId>gwtquery</artifactId>
             <version>1.5-beta1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.gwtd3</groupId>
+            <artifactId>gwt-d3-api</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -75,6 +82,15 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
                 <version>2.8.0</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.12</version>
+                <configuration>
+                    <message>Creating site for ${project.version}</message>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/tables</outputDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
